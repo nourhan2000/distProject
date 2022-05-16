@@ -1,5 +1,6 @@
+import EditorInterface from "./EditorInterface";
 function App() {
-    return ("hi");
+    return (<EditorInterface />);
 }
 
 export default App;

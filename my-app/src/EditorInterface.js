@@ -7,7 +7,7 @@ export default function EditorInterface() {
         if (QuillBox == null) return;
         QuillBox.innerHTML = "";
         const doc = document.createElement("div");
-        QuillBox.current.append(doc);
+        QuillBox.append(doc);
         new Quill("#QuillBox", { theme: "snow" });
     }, []);
     return (<div id="QuillBox" ref={QuillBoxRef} > EditorInterface </div>);

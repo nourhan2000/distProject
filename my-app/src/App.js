@@ -1,4 +1,4 @@
-import EditorInterface from "./EditorInterface";
+import EditorInterface from "./EditorInterface.js";
 function App() {
     return (<EditorInterface />);
 }

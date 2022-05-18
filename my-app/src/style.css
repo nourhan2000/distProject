@@ -1,0 +1,52 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: rgb(242, 235, 235);
+    margin: 10px;
+
+}
+
+.ql-editor {
+    width: 10in;
+    min-height: 15in;
+    padding: 0.5in;
+    margin: 5px;
+    background-color: rgb(255, 255, 255);
+    border: 1px dotted;
+}
+
+.ql-container {
+    display: flex;
+    justify-content: center;
+}
+
+.ql-toolbar {
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: lightgray;
+}
+
+
+@media print {
+    body {
+        background: none;
+    }
+
+    .ql-editor {
+        width: 9in;
+        height: 13in;
+        padding: 0;
+        margin: 0;
+    }
+
+    .ql-toolbar {
+        display: none;
+    }
+}

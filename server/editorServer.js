@@ -4,6 +4,8 @@ const options = {
 };
 const io = require('socket.io')(3001, options);
 
-io.on("connection", socket => {
-
+io.on("connection", serverSocket => {
+    serverSocket.on("change-in-text", delta => {
+        serverSocket.broadcast.emit("recieve-text-change", delta);
+    })
 });

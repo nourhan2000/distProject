@@ -2,9 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { io } from "socket.io-client"
+import { useParams } from "react-router-dom"
 
 export default function EditorInterface() {
-
+    const { id: QuillBoxId } = useParams()
     const [serverSocket, setServer] = useState();
     const [editor, setEditor] = useState();
 
@@ -15,6 +16,17 @@ export default function EditorInterface() {
             server.disconnect();//disconnect from server
         }
     }, []);
+
+    useEffect(() => {
+        if (serverSocket == null || editor == null) return
+    
+        serverSocket.once("load-document", document => {
+          editor.setContents(document)
+          editor.enable() 
+        })
+    
+        serverSocket.emit("get-document", QuillBoxId)
+      }, [serverSocket, editor, QuillBoxId])
 
     useEffect(() => {
         if (serverSocket == null || editor == null) return;
@@ -60,6 +72,9 @@ export default function EditorInterface() {
                 ]
             },
         });
+        
+        e.disable()//disable document while loading
+        e.setText("LOADING...") 
         setEditor(e);
     }, []);
     return (<div id="QuillBox" ref={QuillBoxRef} > EditorInterface </div>);

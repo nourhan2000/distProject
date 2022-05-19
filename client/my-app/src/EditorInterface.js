@@ -19,14 +19,14 @@ export default function EditorInterface() {
 
     useEffect(() => {
         if (serverSocket == null || editor == null) return
-    
-        serverSocket.once("load-document", document => {
-          editor.setContents(document)
-          editor.enable() 
+
+        serverSocket.once("load-inner-text", doc => {
+            editor.setContents(doc)
+            editor.enable()
         })
-    
-        serverSocket.emit("get-document", QuillBoxId)
-      }, [serverSocket, editor, QuillBoxId])
+
+        serverSocket.emit("get-inner-text", QuillBoxId)
+    }, [serverSocket, editor, QuillBoxId])
 
     useEffect(() => {
         if (serverSocket == null || editor == null) return;
@@ -72,9 +72,9 @@ export default function EditorInterface() {
                 ]
             },
         });
-        
+
         e.disable()//disable document while loading
-        e.setText("LOADING...") 
+        e.setText("LOADING...")
         setEditor(e);
     }, []);
     return (<div id="QuillBox" ref={QuillBoxRef} > EditorInterface </div>);

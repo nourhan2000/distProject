@@ -9,13 +9,13 @@ const io = require('socket.io')(3001,
 
 
 io.on("connection", serversocket => {
-    serversocket.on("get-document",  QuillBoxId=> {
-      const data=""
-      serversocket.join(QuillBoxId)
-      serversocket.emit("load-document",data)
-  
-      serversocket.on("change-in-text", delta => {
-        serversocket.broadcast.to(QuillBoxId).emit("recieve-text-change", delta)
-      })
+    serversocket.on("get-inner-text", QuillBoxId => {
+        const data = ""
+        serversocket.join(QuillBoxId)
+        serversocket.emit("load-inner-text", data)
+
+        serversocket.on("change-in-text", delta => {
+            serversocket.broadcast.to(QuillBoxId).emit("recieve-text-change", delta)
+        })
     })
 })

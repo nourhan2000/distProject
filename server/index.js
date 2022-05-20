@@ -1,3 +1,13 @@
+const mongoose = require("mongoose")
+
+// setting we can apply different from doucmentation of mongoose
+mongoose.connect('mongodb://localhost/editor_DB', {
+userNewURlParse : true, 
+useUnifiedTopology : true, 
+useFindAndModify : false, 
+useCreateIndex : true 
+});
+
 const io = require('socket.io')(3001,
     {
         cors: {

@@ -3,10 +3,10 @@
    Contain all the data of our doucment in our database 
 *********************************************************/ 
 
-const {schema, model} = require('mongoose')
+const {Schema, model} = require('mongoose')
 
 // Setting up the schema **** Name of Schema : Data Document **** 
-const DataDocument = new schema({
+const DataDocument = new Schema({
     _id: String,
     data: Object,  
 })

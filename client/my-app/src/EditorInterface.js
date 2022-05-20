@@ -3,7 +3,9 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { io } from "socket.io-client"
 import { useParams } from "react-router-dom"
+//import { clearInterval } from "timers";
 
+const SavingTimer =2000 // 2 seconds then save 
 export default function EditorInterface() {
     const { id: QuillBoxId } = useParams()
     const [serverSocket, setServer] = useState();
@@ -27,6 +29,19 @@ export default function EditorInterface() {
 
         serverSocket.emit("get-inner-text", QuillBoxId)
     }, [serverSocket, editor, QuillBoxId])
+
+// use effect to do the savings 
+   useEffect(() => {
+    if (serverSocket ==null || editor == null ) return 
+    // setting a timer to save 
+    const doctimer =setInterval(() =>{
+        serverSocket.emit("save-doc", editor.getContents())
+    }, SavingTimer)
+    return ()=> {
+        clearInterval(doctimer)
+    }
+   },[serverSocket, editor])
+
 
     useEffect(() => {
         if (serverSocket == null || editor == null) return;

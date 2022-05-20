@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "editorServer.js",
-  "type": "Commonjs",
+  "type": "commonjs",
   "scripts": {
     "devStart": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "mongoose": "^6.3.4",
     "socket.io": "^4.5.1"
   },
   "devDependencies": {

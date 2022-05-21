@@ -32,13 +32,17 @@ const defaultValue = ""
 async function findorCrateDocmement(id) {
     if (id == null) return;
     const doc = await DataDocument.findById(id).catch(() => {
-        console.log('Unable to find to the mongodb instance.');
+        console.log('nourhan:Unable to find to the mongodb instance.');
     });
     // if we have the doucment return it to the user 
     if (doc) return doc;
     // if not return a created doc 
 
-    return await DataDocument.create({ _id: id, data: defaultValue });
+    return (async () => {
+        await DataDocument.create({ _id: id, data: defaultValue }).catch(() => {
+            console.log("nourhan:can't create a new document");
+        });
+    });
 }
 
 io.on("connection", serversocket => {
@@ -52,7 +56,7 @@ io.on("connection", serversocket => {
         })
 
         serversocket.on("Save-Doc", async data => {
-            await doc.findByIdAndUpdate(QuillBoxId, { data })
+            await doc.findByIdAndUpdate(QuillBoxId, { data });
         })
     })
 })

@@ -50,13 +50,12 @@ io.on("connection", serversocket => {
     serversocket.on("get-inner-text", async QuillBoxId => {
         await mutex.runExclusive(async () => {
             const doc = await findorCrateDocmement(QuillBoxId);
-            serversocket.join(QuillBoxId)
-            serversocket.emit("load-inner-text", doc.data)
+            serversocket.join(QuillBoxId);
+            serversocket.emit("load-inner-text", doc.data);
 
             serversocket.on("change-in-text", delta => {
                 serversocket.broadcast.to(QuillBoxId).emit("recieve-text-change", delta)
-            })
-
+            });
             serversocket.on("Save-Doc", async text => {
                 await doc.updateOne({ _id: QuillBoxId }, { data: text }).catch(err => {
                     console.log("can't update document.", err);

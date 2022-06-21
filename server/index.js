@@ -14,7 +14,7 @@ const options = {
     family: 4 // Use IPv4, skip trying IPv6
 };
 
-mongoose.connect('mongodb://localhost/editor_DB', options).then(() => {
+mongoose.connect('mongodb://localhost/editor_db', options).then(() => {
     console.log("connected to db")
 }).catch(err => {
     console.log('Unable to connect to the mongodb instance.', err);
@@ -37,31 +37,53 @@ const defaultValue = ""
 // Searching for a doucment or creating new one 
 async function findorCrateDocmement(id) {
     if (id == null) return;
-    const doc = await DataDocument.findOne({ _id: id }).catch(err => {
-        console.log('nourhan:Unable to find to the mongodb instance.', err);
+    const doc = await DataDocument.findById(id).then(() => {
+        console.log("hena");
+    }).catch(err => {
+        console.log('Unable to find to the mongodb instance.', err);
     });
+    console.log(doc);
     // if we have the doucment return it to the user 
     if (doc) return doc;
+    console.log(typeof id);
     // if not return a created doc 
-    return await new DataDocument({ _id: id, data: defaultValue });
+    const document = await new DataDocument({ data: defaultValue });
+    document._id = id;
+    document.save().then(() => {
+        console.log("created");
+    }).catch(err => {
+        console.log("can't create document.", err);
+    });
+    return document;
+    //const document = await DataDocument.create({ _id: id, data: defaultValue }).then(() => {
+    //    console.log("created");
+    //}).catch(err => {
+    //    console.log("can't create document.", err);
+    //});
+    //return document;
 }
 
 io.on("connection", serversocket => {
     serversocket.on("get-inner-text", async QuillBoxId => {
-        await mutex.runExclusive(async () => {
-            const doc = await findorCrateDocmement(QuillBoxId);
-            serversocket.join(QuillBoxId);
-            serversocket.emit("load-inner-text", doc.data);
 
-            serversocket.on("change-in-text", delta => {
+        const doc = await findorCrateDocmement(QuillBoxId);
+        console.log(doc);
+        serversocket.join(QuillBoxId);
+        serversocket.emit("load-inner-text", doc.data);
+
+        serversocket.on("change-in-text", delta => {
+            mutex.runExclusive(() => {
                 serversocket.broadcast.to(QuillBoxId).emit("recieve-text-change", delta)
             });
-            serversocket.on("Save-Doc", async text => {
-                await doc.updateOne({ _id: QuillBoxId }, { data: text }).catch(err => {
-                    console.log("can't update document.", err);
-                });
-            })
         });
+        serversocket.on("SaveDoc", text => {
+            DataDocument.findByIdAndUpdate(QuillBoxId, { text }).then(() => {
+                console.log("saved");
+            }).catch(err => {
+                console.log("can't update document.", err);
+            });
+        })
+
     })
 })
 

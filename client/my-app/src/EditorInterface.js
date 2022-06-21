@@ -4,7 +4,7 @@ import "quill/dist/quill.snow.css";
 import { io } from "socket.io-client"
 import { useParams } from "react-router-dom"
 
-const SavingTimer = 2000 // 2 seconds then save 
+const SavingTimer = 1000; // 2 seconds then save 
 export default function EditorInterface() {
     const { id: QuillBoxId } = useParams()
     const [serverSocket, setServer] = useState();
@@ -34,7 +34,7 @@ export default function EditorInterface() {
         if (serverSocket == null || editor == null) return;
         // setting a timer to save 
         const doctimer = setInterval(() => {
-            serverSocket.emit("Save-Doc", editor.getContents());
+            serverSocket.emit("SaveDoc", editor.getContents());
         }, SavingTimer);
         return (() => {
             clearInterval(doctimer)

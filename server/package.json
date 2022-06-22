@@ -14,6 +14,7 @@
   "dependencies": {
     "async-mutex": "^0.3.2",
     "mongoose": "^6.3.4",
+    "redis": "^4.1.0",
     "socket.io": "^4.5.1"
   },
   "devDependencies": {

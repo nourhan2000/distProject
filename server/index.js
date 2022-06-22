@@ -6,6 +6,10 @@ var Mutex = require('async-mutex').Mutex;
 
 const mutex = new Mutex();
 
+const Redis = require("redis");
+
+const client = Redis.createClient(); //pass url for deployment
+
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -23,6 +27,11 @@ mongoose.connect('mongodb://localhost/editor_db', options).then(() => {
 
 });
 
+client.connect().then(() => {
+    console.log("redis connected");
+}).catch(err => {
+    console.log("redis didn't connect", err);
+});
 // setting we can apply different from doucmentation of mongoose
 //mongoose.createConnection('mongodb://localhost/editor_DB').asPromise();
 const io = require('socket.io')(3001,
@@ -61,17 +70,29 @@ async function findorCrateDocmement(id) {
     return document;
 }
 
+
+
 io.on("connection", serversocket => {
     serversocket.on("get-inner-text", async QuillBoxId => {
 
-        const doc = await findorCrateDocmement(QuillBoxId);
-        console.log(doc);
+        //get cache value first if null get it from the database 
+        var data;
+        await client.get(QuillBoxId).then(res => {
+            data = JSON.parse(res);
+            if (data) console.log("cache hit")
+        });
+        if (data == null) {
+            console.log("cache miss")
+            doc = await findorCrateDocmement(QuillBoxId);
+            data = doc.data
+        }
+        console.log(data);
         serversocket.join(QuillBoxId);
-        serversocket.emit("load-inner-text", doc.data);
-
+        serversocket.emit("load-inner-text", data);
         serversocket.on("change-in-text", delta => {
             mutex.runExclusive(() => {
-                serversocket.broadcast.to(QuillBoxId).emit("recieve-text-change", delta)
+                serversocket.broadcast.to(QuillBoxId).emit("recieve-text-change", delta);
+                //set cache value
             });
         });
         serversocket.on("SaveDoc", text => {
@@ -80,6 +101,9 @@ io.on("connection", serversocket => {
                 //console.log("saved");
             }).catch(err => {
                 console.log("can't update document.", err);
+            });
+            client.setEx(QuillBoxId, 3600, JSON.stringify(text)).then(() => {
+                console.log("cache updated");
             });
         })
 

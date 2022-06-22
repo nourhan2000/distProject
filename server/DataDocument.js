@@ -12,7 +12,7 @@ const DataDocument = new Schema({
 })
 
 //Now we call the models needed 
-module.exports = model("DataDocument", DataDocument)
+module.exports = model("DataDocument", DataDocument, "DataDocument")
 
 /**After creating this file, it gives us the ability to store pieces of information**/
 

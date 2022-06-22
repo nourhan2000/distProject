@@ -7,6 +7,8 @@ var Mutex = require('async-mutex').Mutex;
 const mutex = new Mutex();
 
 const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
     autoIndex: false, // Don't build indexes
     maxPoolSize: 10, // Maintain up to 10 socket connections
     serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
@@ -37,8 +39,10 @@ const defaultValue = ""
 // Searching for a doucment or creating new one 
 async function findorCrateDocmement(id) {
     if (id == null) return;
-    const doc = await DataDocument.findById(id).then(() => {
-        console.log("hena");
+    var doc;
+    await DataDocument.findOne({ $get: { id: String(id) } }).then(res => {
+        doc = res;
+        console.log("found");
     }).catch(err => {
         console.log('Unable to find to the mongodb instance.', err);
     });
@@ -55,12 +59,6 @@ async function findorCrateDocmement(id) {
         console.log("can't create document.", err);
     });
     return document;
-    //const document = await DataDocument.create({ _id: id, data: defaultValue }).then(() => {
-    //    console.log("created");
-    //}).catch(err => {
-    //    console.log("can't create document.", err);
-    //});
-    //return document;
 }
 
 io.on("connection", serversocket => {
@@ -77,8 +75,9 @@ io.on("connection", serversocket => {
             });
         });
         serversocket.on("SaveDoc", text => {
-            DataDocument.findByIdAndUpdate(QuillBoxId, { text }).then(() => {
-                console.log("saved");
+            //console.log(text);
+            DataDocument.findOneAndUpdate({ _id: QuillBoxId }, { $set: { data: text } }, { new: true }).then(() => {
+                //console.log("saved");
             }).catch(err => {
                 console.log("can't update document.", err);
             });

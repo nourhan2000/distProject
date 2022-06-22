@@ -49,9 +49,9 @@ const defaultValue = ""
 async function findorCrateDocmement(id) {
     if (id == null) return;
     var doc;
-    await DataDocument.findOne({ $get: { id: String(id) } }).then(res => {
-        doc = res;
-        console.log("found");
+    await DataDocument.findById(id).then(res => {
+        if (res != null)
+            doc = res;
     }).catch(err => {
         console.log('Unable to find to the mongodb instance.', err);
     });
@@ -74,7 +74,7 @@ async function findorCrateDocmement(id) {
 
 io.on("connection", serversocket => {
     serversocket.on("get-inner-text", async QuillBoxId => {
-
+        console.log(QuillBoxId);
         //get cache value first if null get it from the database 
         var data;
         await client.get(QuillBoxId).then(res => {
@@ -97,7 +97,7 @@ io.on("connection", serversocket => {
         });
         serversocket.on("SaveDoc", text => {
             //console.log(text);
-            DataDocument.findOneAndUpdate({ _id: QuillBoxId }, { $set: { data: text } }, { new: true }).then(() => {
+            DataDocument.findOneAndUpdate({ _id: QuillBoxId }, { $set: { data: text } }).then(() => {
                 //console.log("saved");
             }).catch(err => {
                 console.log("can't update document.", err);

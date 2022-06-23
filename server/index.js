@@ -20,7 +20,7 @@ const options = {
     family: 4 // Use IPv4, skip trying IPv6
 };
 
-mongoose.connect('mongodb://localhost/editor_db', options).then(() => {
+mongoose.connect('mongodb://localhost:27017,localhost:27020,localhost:27021?replicaSet=myReplicaSet', options).then(() => {
     console.log("connected to db")
 }).catch(err => {
     console.log('Unable to connect to the mongodb instance.', err);

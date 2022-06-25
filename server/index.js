@@ -2,13 +2,21 @@ const mongoose = require("mongoose")
 
 const DataDocument = require("./DataDocument")
 
+const express = require('express');
+
+const cors = require("cors");
+
+const http = require('http');
+
+const socketio = require('socket.io');
+
 var Mutex = require('async-mutex').Mutex;
 
 const mutex = new Mutex();
 
 const Redis = require("redis");
-
-const client = Redis.createClient(); //pass url for deployment
+//redis://default:3I3tEaZvv7xbFdKo2qkTmH5Q4zxHMZ8c@
+const client = Redis.createClient({ url: "redis://redis-14025.c240.us-east-1-3.ec2.cloud.redislabs.com:14025" }); //pass url for deployment
 
 const options = {
     useNewUrlParser: true,
@@ -20,7 +28,15 @@ const options = {
     family: 4 // Use IPv4, skip trying IPv6
 };
 
-mongoose.connect('mongodb://localhost:27017,localhost:27020,localhost:27021?replicaSet=myReplicaSet', options).then(() => {
+const app = express();
+
+app.use(cors)
+
+const dotenv = require('dotenv')
+
+dotenv.config()
+
+mongoose.connect(process.env.MONGO_URL, options).then(() => {
     console.log("connected to db")
 }).catch(err => {
     console.log('Unable to connect to the mongodb instance.', err);
@@ -34,14 +50,10 @@ client.connect().then(() => {
 });
 // setting we can apply different from doucmentation of mongoose
 //mongoose.createConnection('mongodb://localhost/editor_DB').asPromise();
-const io = require('socket.io')(3001,
-    {
-        cors: {
-            origin: "http://localhost:3000",
-            methods: ["GET", "POST"],
-        },
-    }
-);
+const httpServer = http.createServer();
+
+const io = socketio(httpServer);
+
 
 const defaultValue = ""
 
@@ -92,7 +104,6 @@ io.on("connection", serversocket => {
         serversocket.on("change-in-text", delta => {
             mutex.runExclusive(() => {
                 serversocket.broadcast.to(QuillBoxId).emit("recieve-text-change", delta);
-                //set cache value
             });
         });
         serversocket.on("SaveDoc", text => {
@@ -110,4 +121,4 @@ io.on("connection", serversocket => {
     })
 })
 
-
+httpServer.listen(process.env.PORT);

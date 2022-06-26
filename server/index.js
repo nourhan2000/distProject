@@ -29,7 +29,7 @@ const options = {
 };
 
 const corsOptions = {
-    origin: "https://62b82b6af57baf27fdfb80d9--distributedtexteditor.netlify.app/*",
+    origin: "https://distributedtexteditor.netlify.app/*",
     methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"],
     preflightContinue: false
 }
@@ -58,13 +58,14 @@ client.connect().then(() => {
 //mongoose.createConnection('mongodb://localhost/editor_DB').asPromise();
 const httpServer = http.createServer();
 
-const io = socketio(httpServer, {
-    cors: {
-        origin: "https://62b82b6af57baf27fdfb80d9--distributedtexteditor.netlify.app/*",
-        methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"],
-        preflightContinue: false
-    }
-});
+const io = socketio(httpServer)
+// , {
+//     cors: {
+//         origin: "https://distributedtexteditor.netlify.app/*",
+//         methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"],
+//         preflightContinue: false
+//     }
+// });
 
 
 const defaultValue = ""

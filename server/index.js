@@ -28,10 +28,16 @@ const options = {
     family: 4 // Use IPv4, skip trying IPv6
 };
 
+const corsOptions = {
+    origin: "https://62b82b6af57baf27fdfb80d9--distributedtexteditor.netlify.app/*",
+    methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"],
+    preflightContinue: false
+}
+
 const app = express();
 
-app.use(cors)
-
+app.use(cors(corsOptions))
+app.options("*", cors(corsOptions))
 const dotenv = require('dotenv')
 
 dotenv.config()
@@ -52,7 +58,13 @@ client.connect().then(() => {
 //mongoose.createConnection('mongodb://localhost/editor_DB').asPromise();
 const httpServer = http.createServer();
 
-const io = socketio(httpServer);
+const io = socketio(httpServer, {
+    cors: {
+        origin: "https://62b82b6af57baf27fdfb80d9--distributedtexteditor.netlify.app/*",
+        methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"],
+        preflightContinue: false
+    }
+});
 
 
 const defaultValue = ""

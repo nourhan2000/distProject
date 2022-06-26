@@ -18,7 +18,6 @@ const mutex = new Mutex();
 
 const Redis = require("redis");
 
-
 //redis://default:3I3tEaZvv7xbFdKo2qkTmH5Q4zxHMZ8c@
 const client = Redis.createClient({ url: "redis://default:3I3tEaZvv7xbFdKo2qkTmH5Q4zxHMZ8c@redis-14025.c240.us-east-1-3.ec2.cloud.redislabs.com:14025" }); //pass url for deployment
 
@@ -34,6 +33,8 @@ const options = {
 
 
 const app = express();
+
+app.use(express.static('public/'))
 
 const dotenv = require('dotenv')
 

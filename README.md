@@ -43,3 +43,7 @@ To start the project please run the following commands in:
     ```bash
     npm run devStart
     ```
+
+# If you just want to use the editor 
+
+    Click on the following link it just that simple as that : https://disttexteditorproject.netlify.app/

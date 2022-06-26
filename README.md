@@ -13,6 +13,9 @@ Please use the following links to install prequisits for the project to run loca
 * Run the following commands in the server folder:
     <!-- Code Blocks -->
     ```bash
+    npm i socket.io
+    npm i --save-dev nodeman
+    npm i mongoose
     npm install redis
     npm install async-mutex
     ```
@@ -21,6 +24,9 @@ Please use the following links to install prequisits for the project to run loca
     <!-- Code Blocks -->
     ```bash
     npm i quill
+    npm i socket.io-client
+    npm i react-router-dom
+    npm i uuid
     ```
 
 

@@ -30,10 +30,10 @@ const options = {
 
 const corsOptions = {
     origin: "https://distributedtexteditor.netlify.app/*",
-    methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"],
-    preflightContinue: false,
-    allowedHeaders: ["secretHeader"]
-}
+    methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"]
+    //preflightContinue: false,
+    //allowedHeaders: ["secretHeader"]
+};
 
 const app = express();
 

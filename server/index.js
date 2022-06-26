@@ -6,6 +6,8 @@ const express = require('express');
 
 const cors = require("cors");
 
+const router = express.Router();
+
 const http = require('http');
 
 const socketio = require('socket.io');
@@ -15,8 +17,10 @@ var Mutex = require('async-mutex').Mutex;
 const mutex = new Mutex();
 
 const Redis = require("redis");
+
+
 //redis://default:3I3tEaZvv7xbFdKo2qkTmH5Q4zxHMZ8c@
-const client = Redis.createClient({ url: "redis://redis-14025.c240.us-east-1-3.ec2.cloud.redislabs.com:14025" }); //pass url for deployment
+const client = Redis.createClient({ url: "redis://default:3I3tEaZvv7xbFdKo2qkTmH5Q4zxHMZ8c@redis-14025.c240.us-east-1-3.ec2.cloud.redislabs.com:14025" }); //pass url for deployment
 
 const options = {
     useNewUrlParser: true,
@@ -28,17 +32,9 @@ const options = {
     family: 4 // Use IPv4, skip trying IPv6
 };
 
-const corsOptions = {
-    origin: "https://distributedtexteditor.netlify.app/*",
-    methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"]
-    //preflightContinue: false,
-    //allowedHeaders: ["secretHeader"]
-};
 
 const app = express();
 
-app.use(cors(corsOptions))
-app.options("*", cors(corsOptions))
 const dotenv = require('dotenv')
 
 dotenv.config()
@@ -55,19 +51,27 @@ client.connect().then(() => {
 }).catch(err => {
     console.log("redis didn't connect", err);
 });
-// setting we can apply different from doucmentation of mongoose
-//mongoose.createConnection('mongodb://localhost/editor_DB').asPromise();
+
 const httpServer = http.createServer();
 
-const io = socketio(httpServer)
-// , {
-//     cors: {
-//         origin: "https://distributedtexteditor.netlify.app/*",
-//         methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"],
-//         preflightContinue: false
-//     }
-// });
+const io = socketio(httpServer
+    , {
+        cors: {
+            origin: "*",
+            methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"],
+            credentials: true
+        }
+    });
 
+app.use(cors)
+
+app.options("*", cors)
+
+router.get("/", (req, res) => {
+    res.send({ response: "Server is up and running." }).status(200);
+});
+
+app.use(router);
 
 const defaultValue = ""
 

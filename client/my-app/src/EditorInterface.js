@@ -12,7 +12,8 @@ export default function EditorInterface() {
 
     useEffect(() => {
         const server = io('https://distributed-proj.herokuapp.com/', {
-            withCredentials: true
+            withCredentials: true,
+            transports: ["websocket"]
         });//connect to server 
         setServer(server);
         return () => {

@@ -13,8 +13,6 @@ Please use the following links to install prequisits for the project to run loca
 * Run the following commands in the server folder:
     <!-- Code Blocks -->
     ```bash
-    npm install cors
-    npm i express
     npm install redis
     npm install async-mutex
     ```

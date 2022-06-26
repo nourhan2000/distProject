@@ -11,7 +11,7 @@ export default function EditorInterface() {
     const [editor, setEditor] = useState();
 
     useEffect(() => {
-        const server = io('http://localhost:3001');//connect to server 
+        const server = io('https://distributed-proj.herokuapp.com/');//connect to server 
         setServer(server);
         return () => {
             server.disconnect();//disconnect from server

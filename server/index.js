@@ -34,8 +34,6 @@ const options = {
 
 const app = express();
 
-app.use(express.static('public/'))
-
 const dotenv = require('dotenv')
 
 dotenv.config()
